@@ -1,16 +1,20 @@
-import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
+import { collection, getDocs, getFirestore } from "firebase/firestore/lite";
 
 // GET SINGLE POST
 export const GET = async (req, { params }) => {
   const { slug } = params;
 
   try {
-    const post = await prisma.post.update({
-      where: { slug },
-      data: { views: { increment: 1 } },
-      include: { user: true },
-    });
+    const posts = await getPosts();
+
+    const post = posts.find((post) => post.slug === slug);
+
+    if (!post) {
+      return new NextResponse(
+        JSON.stringify({ message: "Post not found!" }, { status: 404 })
+      );
+    }
 
     return new NextResponse(JSON.stringify(post, { status: 200 }));
   } catch (err) {
@@ -20,3 +24,12 @@ export const GET = async (req, { params }) => {
     );
   }
 };
+
+async function getPosts() {
+  const postsCol = collection(db, "posts");
+  const postsSnapshot = await getDocs(postsCol);
+  const postsList = postsSnapshot.docs.map((doc) => doc.data());
+
+  console.log(postsList);
+  return postsList;
+}

@@ -1,6 +1,6 @@
 import { getAuthSession } from "@/utils/auth";
-import prisma from "@/utils/connect";
 import { NextResponse } from "next/server";
+import {collection, getDocs} from "firebase/firestore/lite";
 
 export const GET = async (req) => {
   const { searchParams } = new URL(req.url);
@@ -18,18 +18,9 @@ export const GET = async (req) => {
     },
   };
 
-
-
-
-
-
-  
-  
   try {
-    const [posts, count] = await prisma.$transaction([
-      prisma.post.findMany(query),
-      prisma.post.count({ where: query.where }),
-    ]);
+    const posts = await getPosts();
+    const count = posts.length;
     return new NextResponse(JSON.stringify({ posts, count }, { status: 200 }));
   } catch (err) {
     console.log(err);
@@ -38,6 +29,14 @@ export const GET = async (req) => {
     );
   }
 };
+
+async function getPosts() {
+  const postsCol = collection(db, "posts");
+    const postsSnapshot = await getDocs(postsCol);
+    const postsList = postsSnapshot.docs.map((doc) => doc.data());
+    console.log(postsList);
+    return postsList;
+}
 
 
 

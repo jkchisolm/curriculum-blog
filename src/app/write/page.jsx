@@ -14,6 +14,9 @@ import {
 } from "firebase/storage";
 import { app } from "@/utils/firebase";
 import ReactQuill from "react-quill";
+import { addDoc } from "firebase/firestore";
+import db from "@/utils/firestore";
+import { collection } from "firebase/firestore";
 
 const WritePage = () => {
   const { status } = useSession();
@@ -78,20 +81,19 @@ const WritePage = () => {
       .replace(/^-+|-+$/g, "");
 
   const handleSubmit = async () => {
-    const res = await fetch("/api/posts", {
-      method: "POST",
-      body: JSON.stringify({
+    console.log("In handlesubmit");
+    try {
+      const postRef = await addDoc(collection(db, "posts"), {
         title,
         desc: value,
         img: media,
         slug: slugify(title),
         catSlug: catSlug || "style", //If not selected, choose the general category
-      }),
-    });
-
-    if (res.status === 200) {
-      const data = await res.json();
-      router.push(`/posts/${data.slug}`);
+      });
+      console.log("postRef " + postRef);
+      router.push(`/posts/${postRef.id}`);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -103,7 +105,10 @@ const WritePage = () => {
         className={styles.input}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <select className={styles.select} onChange={(e) => setCatSlug(e.target.value)}>
+      <select
+        className={styles.select}
+        onChange={(e) => setCatSlug(e.target.value)}
+      >
         <option value="style">style</option>
         <option value="fashion">fashion</option>
         <option value="food">food</option>

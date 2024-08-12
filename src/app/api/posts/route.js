@@ -1,6 +1,7 @@
 import { getAuthSession } from "@/utils/auth";
 import { NextResponse } from "next/server";
-import {collection, getDocs} from "firebase/firestore/lite";
+import { collection, getDocs, addDoc } from "firebase/firestore/lite";
+import { db } from "../../../utils/firebase";
 
 export const GET = async (req) => {
   const { searchParams } = new URL(req.url);
@@ -32,24 +33,17 @@ export const GET = async (req) => {
 
 async function getPosts() {
   const postsCol = collection(db, "posts");
-    const postsSnapshot = await getDocs(postsCol);
-    const postsList = postsSnapshot.docs.map((doc) => doc.data());
-    console.log(postsList);
-    return postsList;
+  const postsSnapshot = await getDocs(postsCol);
+  const postsList = postsSnapshot.docs.map((doc) => doc.data());
+  console.log(postsList);
+  return postsList;
 }
-
-
-
-
-
-
-
-
-
 
 // CREATE A POST
 export const POST = async (req) => {
   const session = await getAuthSession();
+
+  console.log("in post method");
 
   if (!session) {
     return new NextResponse(
@@ -59,11 +53,19 @@ export const POST = async (req) => {
 
   try {
     const body = await req.json();
-    const post = await prisma.post.create({
-      data: { ...body, userEmail: session.user.email },
-    });
+    console.log("Body: " + body);
+    // const postRef = await addDoc(collection(db, "posts"), {
+    //   ...body,
+    //   userEmail: session.user.email,
+    // });
 
-    return new NextResponse(JSON.stringify(post, { status: 200 }));
+    // console.log("postRef " + postRef);
+
+    return new NextResponse(
+      JSON.stringify({ message: "Post created successfully!" }, { status: 200 })
+    );
+
+    // return new NextResponse(JSON.stringify(postRef, { status: 200 }));
   } catch (err) {
     console.log(err);
     return new NextResponse(

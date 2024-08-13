@@ -82,6 +82,8 @@ const WritePage = () => {
 
   const handleSubmit = async () => {
     console.log("In handlesubmit");
+    const res = await fetch("/api/auth/me");
+    const user = await res.json();
     try {
       const postRef = await addDoc(collection(db, "posts"), {
         title,
@@ -89,6 +91,8 @@ const WritePage = () => {
         img: media,
         slug: slugify(title),
         catSlug: catSlug || "style", //If not selected, choose the general category
+        userEmail: user.user.email,
+        userName: user.user.name,
       });
       console.log("postRef " + postRef);
       router.push(`/posts/${postRef.id}`);

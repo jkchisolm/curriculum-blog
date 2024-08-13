@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { getServerSession } from "next-auth";
 
 export const authOptions = {
+  secret: "thisisasecretkey",
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,

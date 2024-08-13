@@ -94,7 +94,8 @@ const WritePage = () => {
 
     if (res.status === 200) {
       const data = await res.json();
-      router.push(`/posts/${data.slug}`);
+      // console.log(data);
+      router.push(`/posts/${slugify(title)}`);
     }
   };
 

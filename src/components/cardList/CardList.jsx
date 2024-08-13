@@ -1,29 +1,20 @@
 import React from "react";
 import styles from "./cardList.module.css";
-import Pagination from "../pagination/Pagination";
-import Image from "next/image";
 import Card from "../card/Card";
-import { collection, getDocs } from "firebase/firestore";
-import db from "@/utils/firestore";
 
 const getData = async (page, cat) => {
-  const postsCol = collection(db, "posts");
-  const postsSnapshot = await getDocs(postsCol);
-  const postsList = postsSnapshot.docs.map((doc) => doc.data());
+  const res = await fetch(
+    `http://localhost:3000/api/posts?page=${page}&cat=${cat || ""}`,
+    {
+      cache: "no-store",
+    }
+  );
 
-  return { posts: postsList, count: postsList.length };
-  // const res = await fetch(
-  //   `http://localhost:3000/api/posts?page=${page}&cat=${cat || ""}`,
-  //   {
-  //     cache: "no-store",
-  //   }
-  // );
+  if (!res.ok) {
+    throw new Error("Failed");
+  }
 
-  // if (!res.ok) {
-  //   throw new Error("Failed");
-  // }
-
-  // return res.json();
+  return res.json();
 };
 
 const CardList = async ({ page, cat }) => {

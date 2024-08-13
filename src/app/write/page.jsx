@@ -14,9 +14,6 @@ import {
 } from "firebase/storage";
 import { app } from "@/utils/firebase";
 import ReactQuill from "react-quill";
-import { addDoc } from "firebase/firestore";
-import db from "@/utils/firestore";
-import { collection } from "firebase/firestore";
 
 const WritePage = () => {
   const { status } = useSession();
@@ -81,23 +78,23 @@ const WritePage = () => {
       .replace(/^-+|-+$/g, "");
 
   const handleSubmit = async () => {
-    console.log("In handlesubmit");
-    const res = await fetch("/api/auth/me");
-    const user = await res.json();
-    try {
-      const postRef = await addDoc(collection(db, "posts"), {
+    const res = await fetch("/api/posts", {
+      method: "POST",
+      body: JSON.stringify({
         title,
         desc: value,
         img: media,
         slug: slugify(title),
         catSlug: catSlug || "style", //If not selected, choose the general category
-        userEmail: user.user.email,
-        userName: user.user.name,
-      });
-      console.log("postRef " + postRef);
-      router.push(`/posts/${postRef.id}`);
-    } catch (e) {
-      console.log(e);
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 200) {
+      const data = await res.json();
+      router.push(`/posts/${data.slug}`);
     }
   };
 

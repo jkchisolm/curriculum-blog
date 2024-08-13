@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { collection, getDocs, getFirestore } from "firebase/firestore/lite";
+import { collection, getDocs } from "firebase/firestore";
+import db from "@/utils/firestore";
 
 // GET SINGLE POST
 export const GET = async (req, { params }) => {
@@ -7,6 +8,7 @@ export const GET = async (req, { params }) => {
 
   try {
     const posts = await getPosts();
+    console.log("Posts: ", posts);
 
     const post = posts.find((post) => post.slug === slug);
 

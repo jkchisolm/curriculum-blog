@@ -1,7 +1,7 @@
 import { getAuthSession } from "@/utils/auth";
 import { NextResponse } from "next/server";
-import { collection, getDocs, addDoc } from "firebase/firestore/lite";
-import { db } from "../../../utils/firebase";
+import { collection, getDocs, addDoc } from "firebase/firestore";
+import db from "@/utils/firestore";
 
 export const GET = async (req) => {
   const { searchParams } = new URL(req.url);
@@ -54,18 +54,15 @@ export const POST = async (req) => {
   try {
     const body = await req.json();
     console.log("Body: " + body);
-    // const postRef = await addDoc(collection(db, "posts"), {
-    //   ...body,
-    //   userEmail: session.user.email,
-    // });
+    const postRef = await addDoc(collection(db, "posts"), {
+      ...body,
+      userEmail: session.user.email,
+      userName: session.user.name,
+    });
 
-    // console.log("postRef " + postRef);
+    console.log("postRef " + postRef);
 
-    return new NextResponse(
-      JSON.stringify({ message: "Post created successfully!" }, { status: 200 })
-    );
-
-    // return new NextResponse(JSON.stringify(postRef, { status: 200 }));
+    return new NextResponse(JSON.stringify(postRef, { status: 200 }));
   } catch (err) {
     console.log(err);
     return new NextResponse(

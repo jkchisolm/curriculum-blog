@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import db from "@/utils/firestore";
 
-export const GET = async (req) => {
+export const GET = async () => {
   try {
     const posts = await getPosts();
     const count = posts.length;

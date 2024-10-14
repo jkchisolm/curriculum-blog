@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { collection, getDocs } from "firebase/firestore";
-import db from "@/utils/firestore";
+import { getPosts } from "../route";
 
 // GET SINGLE POST
 export const GET = async (req, { params }) => {
@@ -26,12 +25,3 @@ export const GET = async (req, { params }) => {
     );
   }
 };
-
-async function getPosts() {
-  const postsCol = collection(db, "posts");
-  const postsSnapshot = await getDocs(postsCol);
-  const postsList = postsSnapshot.docs.map((doc) => doc.data());
-
-  console.log(postsList);
-  return postsList;
-}

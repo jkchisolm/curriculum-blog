@@ -16,7 +16,7 @@ export const GET = async () => {
   }
 };
 
-async function getPosts() {
+export async function getPosts() {
   const postsCol = collection(db, "posts");
   const postsSnapshot = await getDocs(postsCol);
   const postsList = postsSnapshot.docs.map((doc) => doc.data());

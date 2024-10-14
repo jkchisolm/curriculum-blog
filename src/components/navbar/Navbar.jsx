@@ -8,7 +8,7 @@ import ThemeToggle from "../themeToggle/ThemeToggle";
 const Navbar = () => {
   return (
     <div className={styles.container}>
-      <div className={styles.logo}>lamablog</div>
+      <div className={styles.logo}>nextblog</div>
       <div className={styles.links}>
         <ThemeToggle />
         <AuthLinks />
